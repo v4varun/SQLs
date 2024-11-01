@@ -1,4 +1,4 @@
-/* Identify consecutive Sucess and failure as data ranges */
+/* Identify consecutive Success and failure as data ranges */
 Input 
 2019-01-01	success
 2019-01-02	success
@@ -38,5 +38,12 @@ max(date_value) as end_date,
 state
 from cte2 group by state,flg
 
+better Solution with 1 cte
 --------------------------------------------
-
+with cte as
+(
+select *,
+date_value - row_number() over(partition by state order by date_value) as grp
+from  tasks order by date_value
+)
+select min(date_value) as start_date,max(date_value) as end_date,state from cte group by grp,state 
